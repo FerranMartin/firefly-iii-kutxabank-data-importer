@@ -1,0 +1,21 @@
+{
+  "name": "kutxa_parser",
+  "version": "0.0.1",
+  "description": "Little webserver to parse the XLS and Q43 files from KutxaBank to a CSV to be used in the Firefly3 Data Importer",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "PORT=8080 node --watch index.js",
+    "serve": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ferran Martin",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "form-data": "^4.0.0",
+    "multer": "^1.4.5-lts.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {}
+}

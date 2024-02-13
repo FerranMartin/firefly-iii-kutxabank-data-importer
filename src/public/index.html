@@ -1,0 +1,300 @@
+<html>
+<head>
+    <title>KutxaBank importer to FF3</title>
+    <style>
+        /* http://meyerweb.com/eric/tools/css/reset/ 
+        v2.0 | 20110126
+        License: none (public domain)
+        */
+        
+        html, body, div, span, applet, object, iframe,
+        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        a, abbr, acronym, address, big, cite, code,
+        del, dfn, em, img, ins, kbd, q, s, samp,
+        small, strike, strong, sub, sup, tt, var,
+        b, u, i, center,
+        dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend,
+        table, caption, tbody, tfoot, thead, tr, th, td,
+        article, aside, canvas, details, embed, 
+        figure, figcaption, footer, header, hgroup, 
+        menu, nav, output, ruby, section, summary,
+        time, mark, audio, video {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+        }
+        /* HTML5 display-role reset for older browsers */
+        article, aside, details, figcaption, figure, 
+        footer, header, hgroup, menu, nav, section {
+            display: block;
+        }
+        body {
+            line-height: 1;
+        }
+        ol, ul {
+            list-style: none;
+        }
+        blockquote, q {
+            quotes: none;
+        }
+        blockquote:before, blockquote:after,
+        q:before, q:after {
+            content: '';
+            content: none;
+        }
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+    </style>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid #000;
+            padding: 20px;
+            background-color: #fff;
+        }
+        h1 {
+            font-size: 2em; /* Cambia el tamaño de la fuente */
+            color: #333; /* Cambia el color del texto */
+            text-align: center; /* Centra el texto */
+            margin-top: 20px; /* Añade margen en la parte superior */
+            margin-bottom: 20px; /* Añade margen en la parte inferior */
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        label {
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        
+        input {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        input[type="submit"]:disabled {
+            background-color: #ccc;
+            cursor: not-allowed; 
+        }
+        
+        .file-area {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .dropzone {
+            border: 2px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            
+            flex-grow: 1;
+        }
+        .dropzone.dragover {
+            background-color: #c3d6c4;
+        }
+        
+        .remove-icon {
+            margin-right: 10px;
+            display: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>KutxaBank importer to FF3</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="file1">Movimientos de cuenta principal:</label>
+            <div class="file-area">
+                <i class="remove-icon" style="display: none;">🗑️</i>
+                <div class="dropzone" id="dropzone1">
+                    <span class="file-name">
+                        Arrastra y suelta el archivo aquí o haz clic para seleccionar
+                    </span>
+                    <input type="file" id="file1" name="file1" style="visibility: hidden; position: absolute;" accept=".q43">
+                </div>
+            </div>
+            
+            <label for="file2">Movimientos de tarjeta de crédito de Ferran:</label>
+            <div class="file-area">
+                <i class="remove-icon" style="display: none;">🗑️</i>
+                <div class="dropzone" id="dropzone2">
+                    <span class="file-name">
+                        Arrastra y suelta el archivo aquí o haz clic para seleccionar
+                    </span>
+                    <input type="file" id="file2" name="file2" style="visibility: hidden; position: absolute;" accept=".xls">
+                </div>
+            </div>
+            
+            <label for="file3">Movimientos de tarjeta de crédito de Mairiona:</label>
+            <div class="file-area">
+                <i class="remove-icon" style="display: none;">🗑️</i>
+                <div class="dropzone" id="dropzone3">
+                    <span class="file-name">
+                        Arrastra y suelta el archivo aquí o haz clic para seleccionar
+                    </span>
+                    <input type="file" id="file3" name="file3" style="visibility: hidden; position: absolute;" accept=".xls">
+                </div>
+            </div>
+            
+            <input type="submit" value="Upload" disabled>
+        </form>
+    </div>
+    
+    <script>
+        var form = document.querySelector('form');
+        var fileAreas = document.querySelectorAll('.file-area');
+        var submitButton = document.querySelector('input[type="submit"]');
+        
+        fileAreas.forEach(function(fileArea) {
+            var dropzone = fileArea.querySelector('.dropzone');
+            var removeIcon = fileArea.querySelector('.remove-icon');
+            var fileInput = dropzone.querySelector('input[type="file"]');
+            var fileNameElement = dropzone.querySelector('.file-name');
+            
+            dropzone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            dropzone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover'); 
+            });
+            
+            dropzone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover'); 
+                
+                fileInput.files = e.dataTransfer.files;
+                
+                if (!validateFileExtension(fileInput)) {
+                    return;
+                }
+                
+                fileInput.dispatchEvent(new Event('change'))
+            });
+            
+            dropzone.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length === 0 || (fileInput.files.length > 0 && !validateFileExtension(fileInput))) {
+                    fileNameElement.textContent = 'Arrastra y suelta el archivo aquí o haz clic para seleccionar';
+                    removeIcon.style.display = 'none';
+                }
+                
+                if (fileInput.files.length > 0) {
+                    fileNameElement.textContent = 'Archivo seleccionado: ' + fileInput.files[0].name;
+                    removeIcon.style.display = 'inline';
+                }
+                
+                
+                if (isAnyFileSelected()) {
+                    submitButton.removeAttribute('disabled');
+                }
+                else {
+                    submitButton.setAttribute('disabled', '');
+                }
+            });
+            
+            removeIcon.addEventListener('click', function(e) {
+                e.preventDefault();
+                fileInput.value = '';
+                fileInput.dispatchEvent(new Event('change'))
+            });
+        });
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!isAnyFileSelected()) {
+                alert('Por favor selecciona al menos un archivo');
+            }
+            
+            submitButton.textContent = 'Uploading...';
+            submitButton.setAttribute('disabled', '');
+            
+            var formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                
+                submitButton.textContent = 'Upload';
+                submitButton.removeAttribute('disabled');
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                
+                submitButton.textContent = 'Upload';
+                submitButton.removeAttribute('disabled');
+            });
+        });
+        
+        function isAnyFileSelected() {
+            var fileInputs = form.querySelectorAll('input[type="file"]');
+            return Array.from(fileInputs).some(function(fileInput) {
+                return fileInput.files.length > 0;
+            });
+        }
+        
+        function validateFileExtension(fileInput) {
+            if (fileInput.files.length === 0) return true
+            
+            var fileName = fileInput.files[0].name;
+            var fileExtension = fileName.slice((fileName.lastIndexOf(".") - 1 >>> 0) + 2);
+            if (fileInput.id === 'file1' && (fileExtension.toLowerCase() !== 'q43')) {
+                alert('El archivo para la cuenta principal debe ser un .q43');
+                return false;
+            }
+            if ((fileInput.id === 'file2' || fileInput.id === 'file3') && fileExtension.toLowerCase() !== 'xls') {
+                alert('El archivo para la tarjeta de crédito debe ser un .xls');
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>
