@@ -37,11 +37,11 @@ Add a new `.ff3_kutxa_bank_importer.env` file with the following content:
 ```
 PORT=8080
 AUTO_IMPORT_SECRET=
-AUTO_IMPORT_SECRET=
+FIREFLY_III_ACCESS_TOKEN=
 ```
 
 - For the `AUTO_IMPORT_SECRET` use the same value you created at step 2.
-- For the `AUTO_IMPORT_SECRET` use the same value you created at step 1.
+- For the `FIREFLY_III_ACCESS_TOKEN` use the same value you created at step 1.
 
 ### 4. Modify `docker-compose.yml`
 
@@ -52,7 +52,7 @@ version: "3.3"
 
 services:
   kutxabank_importer:
-    image: ghcr.io/FerranMartin/firefly-iii-kutxabank-data-importer:latest
+    image: ghcr.io/ferranmartin/firefly-iii-kutxabank-data-importer:latest
     restart: always
     container_name: firefly_iii_kutxabank_importer
     hostname: kutxabank_importer
