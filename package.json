@@ -1,6 +1,6 @@
 {
   "name": "kutxa_parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Little webserver to parse the XLS and Q43 files from KutxaBank to a CSV to be used in the Firefly3 Data Importer",
   "type": "module",
   "main": "index.js",
